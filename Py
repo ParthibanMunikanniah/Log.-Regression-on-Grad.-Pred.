@@ -1,1 +1,57 @@
+#Importing Libraries
+import numpy as np 
+import pandas as pd
+import matplotlib.pyplot as plt
 
+#Importing Dataset
+dataset=pd.read_csv('Admission_Predict.csv')
+dataset=dataset.drop('Serial No.', 1) # Removing Serial No. seems no Useful
+features = dataset.iloc[:, :-1].values
+labels = dataset.iloc[:, -1].values
+plt.plot(labels_test, y_pred, color = 'red')
+plt.show()
+labels_test = np.reshape(labels_test, (80,1))
+labels_test.reshape(-1,1)
+
+#Splitting Training and Testing Data 
+from sklearn.model_selection import train_test_split
+features_train, features_test, labels_train, labels_test = train_test_split(features, labels, 
+                                                                            test_size = 0.2, random_state = 0)
+##Fitting Multiple Linear Regression on Traing set###
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(features_train, labels_train)                                                
+
+#Prediting the test Results##
+y_pred = regressor.predict(features_test)
+y_pred_train = regressor.predict(features_train)
+
+#Building Optimal model using Backward Propagation###
+import statsmodels.formula.api as sm
+features = np.append(arr = np.ones((400, 1)).astype(int), values = features, axis = 1)
+
+#creating high impact features (removed SOP which is greater than P-value i.e. >0.05)
+features_opt = features[:, [0, 1, 2, 3, 4, 5, 6, 7]]
+regressor_OLS = sm.OLS(endog = labels, exog = features_opt).fit()
+regressor_OLS.summary()
+
+#Removed the predictor variable which higher p value(removed University rating)
+features_opt = features[:, [0, 1, 2, 5, 6, 7]]
+regressor_OLS = sm.OLS(endog = labels, exog = features_opt).fit()
+regressor_OLS.summary()
+
+plt.scatter(_test, y_test, color = 'red')
+plt.plot(X_train, regressor.predict(X_train), color = 'blue')
+plt.title('Salary vs Experience (Training set)')
+plt.xlabel('Years of Experience')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(labels_test,color = 'red')
+y_pred = np.reshape(y_pred, (80,1))
+plt.plot(labels_test, y_pred, color = 'blue')
+
+plt.plot(dataset['GRE Score'], dataset['TOEFL Score'], color = 'red')
+plt.subplot(1,3,1)
+plt.plot(dataset['Chance of Admit'], dataset['SOP'], color = 'red')
+plt.title('Chance wrt GRE')
